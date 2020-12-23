@@ -14,6 +14,7 @@ import com.nylg.javaee.bean.goods.BO.GoodTypeBO;
 import com.nylg.javaee.bean.goods.BO.UpdateSpecListBO;
 import com.nylg.javaee.bean.goods.VO.GetGoodInfoVO;
 import com.nylg.javaee.bean.goods.VO.GetGoodsVO;
+import com.nylg.javaee.bean.goods.VO.GetSearchGoodsVO;
 import com.nylg.javaee.bean.goods.VO.GoodTypeVO;
 
 import java.util.List;
@@ -57,6 +58,10 @@ public interface GoodDao {
     void deleteSpecId(GoodTypeBO goodId);
 
     void deleteGoodId(Integer id);
+
+    List<GetGoodsVO> getAllGoodsByType();
+
+    List<GetSearchGoodsVO> searchGoods(String keyword);
 ////最大库存量
 //    int getMaxstockNum();
 

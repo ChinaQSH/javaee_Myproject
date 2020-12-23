@@ -9,13 +9,14 @@ package com.nylg.javaee.service.serviceImpl;
 
 import com.nylg.javaee.bean.goods.*;
 import com.nylg.javaee.bean.goods.BO.*;
-import com.nylg.javaee.bean.goods.VO.GetGoodInfoVO;
-import com.nylg.javaee.bean.goods.VO.GetGoodsVO;
-import com.nylg.javaee.bean.goods.VO.GoodTypeVO;
+import com.nylg.javaee.bean.goods.VO.*;
 import com.nylg.javaee.dao.GoodDao;
 import com.nylg.javaee.dao.daoImpl.GoodDaoImpl;
 import com.nylg.javaee.service.GoodsService;
+import com.nylg.javaee.util.DruidUtils;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class GoodServiceImpl implements GoodsService {
 
     @Override
     public List<GetGoodsVO> getGoodsByType(int typeId) {
+        if (typeId==-1){
+            return goodDao.getAllGoodsByType();
+        }
         return goodDao.getGoodsByType(typeId);
     }
 
@@ -63,21 +67,48 @@ public class GoodServiceImpl implements GoodsService {
         }
 //        获得最小数据，插入到数据库
         Goods goods = new Goods(null,addGoodsBO.getImg(),addGoodsBO.getName(),unitPrice,addGoodsBO.getTypeId(),stockNum,addGoodsBO.getDesc());
-        goodDao.addGoods(goods);
+
 
 //添加到规格表
 //        隔离要获取goodId，需要同步，所以事务。
 //        TODO：事务
-        int id=goodDao.getMaxId();
+        Connection connection = null;
+        try {
+            connection = DruidUtils.getConnection(true);
+            connection.setAutoCommit(false);
+            goodDao.addGoods(goods);
+            int id=goodDao.getMaxId();
 //        批处理
-        Object[][] objects = new Object[specListBO.size()][];
-        for (int i=0;i<objects.length;i++){
-            SpecListBO specListBO1 = specListBO.get(i);
-            objects[i]=new Object[]{
-                    specListBO1.getSpecName(),specListBO1.getStockNum(),specListBO1.getUnitPrice(),id
-            };
+            Object[][] objects = new Object[specListBO.size()][];
+            for (int i=0;i<objects.length;i++){
+                SpecListBO specListBO1 = specListBO.get(i);
+                objects[i]=new Object[]{
+                        specListBO1.getSpecName(),specListBO1.getStockNum(),specListBO1.getUnitPrice(),id
+                };
+            }
+            goodDao.addSpecList(objects);
+            connection.commit();
+        } catch (Exception e) {
+            if (connection==null){
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        }finally {
+            if (connection!=null){
+                try {
+                    connection.close();
+//                    清除map中的键值对，即ThreadLocal中的connection的值
+                    DruidUtils.releaseResources();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-        goodDao.addSpecList(objects);
+
         return 200;
     }
 
@@ -155,5 +186,22 @@ public class GoodServiceImpl implements GoodsService {
         }
         goodDao.deleteGoodId(id);
         return goodDao.deleteType(id);
+    }
+    //        前台数据获取
+    @Override
+    public GetGoodInfoIndexVO getGoodsInfoIndex(int id) {
+//        查询goods和spec
+        GetGoodInfoVO object= (GetGoodInfoVO) goodDao.getGoodInfo(id);
+//        查询spec
+        List<UpdateSpecListBO> specList=goodDao.getSpecInfo(id);
+        GetGoodInfoIndexVO getGoodInfoIndexVO = new GetGoodInfoIndexVO(object.getImg(), object.getName(), object.getDesc(), object.getTypeId(), specList, object.getUnitPrice());
+        return getGoodInfoIndexVO;
+
+    }
+//查询商品
+    @Override
+    public List<GetSearchGoodsVO> searchGoods(String keyword) {
+        return goodDao.searchGoods(keyword);
+
     }
 }

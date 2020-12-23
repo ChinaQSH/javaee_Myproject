@@ -8,11 +8,9 @@ package com.nylg.javaee.service.serviceImpl;
  */
 
 import com.nylg.javaee.bean.noReply.*;
+import com.nylg.javaee.bean.noReply.BO.AskGoodMsg;
 import com.nylg.javaee.bean.noReply.BO.ReplyBO;
-import com.nylg.javaee.bean.noReply.VO.GoodsNameVO;
-import com.nylg.javaee.bean.noReply.VO.NoReplyMaGVO;
-import com.nylg.javaee.bean.noReply.VO.ReplyMagVO;
-import com.nylg.javaee.bean.noReply.VO.UserNameVO;
+import com.nylg.javaee.bean.noReply.VO.*;
 import com.nylg.javaee.dao.NoReplyDao;
 import com.nylg.javaee.dao.daoImpl.NoReplyDaoImpl;
 import com.nylg.javaee.service.NoReplyService;
@@ -66,5 +64,49 @@ private NoReplyDao noReplyDao=new NoReplyDaoImpl();
 
 //        查询字段
         return noReplyDao.getReplys();
+    }
+
+    @Override
+    public List<GetReplyMsgIndex> getGoodsMsg(int id) {
+//        获取字段
+//        GetReplyMsg getReplyMsg=noReplyDao.getGoodsMsgF(id);
+//        Reply reply=noReplyDao.getReply(id);
+        return noReplyDao.getGoodsMsg(id);
+
+    }
+
+    @Override
+    public GetGoodsCommentIndexVO getGoodsComment(int goodsId) {
+
+//        获取List
+        List<CommentListVO> commentListVOS=noReplyDao.getComment(goodsId);
+        ArrayList<Integer> integers = new ArrayList<>();
+
+//        获取所有的 score
+        for (CommentListVO commentListVO : commentListVOS) {
+            integers.add(commentListVO.getScore());
+        }
+        int num=integers.size();
+        int sum=0;
+        for (Integer integer : integers) {
+            sum=sum+integer;
+        }
+        if (num==0){
+            GetGoodsCommentIndexVO getGoodsCommentIndexVO = new GetGoodsCommentIndexVO(commentListVOS,0.0);
+            return getGoodsCommentIndexVO;
+        }
+        Double rate= Double.valueOf(sum/num);
+        GetGoodsCommentIndexVO getGoodsCommentIndexVO = new GetGoodsCommentIndexVO(commentListVOS,rate);
+        return getGoodsCommentIndexVO;
+    }
+
+    @Override
+    public void askGoodMsg(AskGoodMsg askGoodMsg) {
+//        获取userId
+        UserIdVO userIdVO=noReplyDao.getUserId(askGoodMsg.getToken());
+//        获取specID
+
+//添加数据
+noReplyDao.InsertReply(userIdVO.getId(),askGoodMsg);
     }
 }

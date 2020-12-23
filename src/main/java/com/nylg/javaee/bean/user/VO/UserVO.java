@@ -7,11 +7,14 @@ package com.nylg.javaee.bean.user.VO;
  * @Version: 1.0
  */
 
+import com.alibaba.druid.util.StringUtils;
+
 /**
  *@Description: 管理模块用户信息
  *
  */
 public class UserVO {
+    private Integer code;
     private Integer id;
     private String email;
     private String nickname;
@@ -19,7 +22,9 @@ public class UserVO {
     private String address;
     private String phone;
 
-    public UserVO(Integer id, String email, String nickname, String recipient, String address, String phone) {
+
+    public UserVO(Integer code, Integer id, String email, String nickname,String recipient, String address, String phone) {
+        this.code = code;
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -29,6 +34,14 @@ public class UserVO {
     }
 
     public UserVO() {
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public Integer getId() {
@@ -55,11 +68,13 @@ public class UserVO {
         this.nickname = nickname;
     }
 
-    public String getAddname() {
+
+
+    public String getRecipient() {
         return recipient;
     }
 
-    public void setAddname(String recipient) {
+    public void setRecipient(String recipient) {
         this.recipient = recipient;
     }
 
@@ -79,15 +94,6 @@ public class UserVO {
         this.phone = phone;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", addressname='" + recipient + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
+
+
 }

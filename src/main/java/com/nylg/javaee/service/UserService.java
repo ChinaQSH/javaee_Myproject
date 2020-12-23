@@ -7,7 +7,12 @@ package com.nylg.javaee.service;
  * @Version: 1.0
  */
 
+import com.nylg.javaee.bean.user.BO.UpdateDateIndex;
+import com.nylg.javaee.bean.user.BO.UserLoginBO;
+import com.nylg.javaee.bean.user.BO.UserchangPwdBO;
 import com.nylg.javaee.bean.user.User;
+import com.nylg.javaee.bean.user.VO.UserNameVO;
+import com.nylg.javaee.bean.user.VO.UserVO;
 
 import java.util.List;
 
@@ -34,4 +39,18 @@ public interface UserService {
     int deleteUser(int id);
 
     List<User> searchUser(String word);
+
+    int login(UserLoginBO userLoginBO);
+
+    void signup(User user);
+
+    int updatePwd(UserchangPwdBO userchangPwdBO);
+
+
+    UserVO date(String token);
+
+    void updateUserData(UpdateDateIndex updateDateIndex);
+
+
+    UserNameVO userName(UserLoginBO userLoginBO);
 }

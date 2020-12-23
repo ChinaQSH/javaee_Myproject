@@ -7,6 +7,9 @@ package com.nylg.javaee.service;
  * @Version: 1.0
  */
 
+import com.nylg.javaee.bean.noReply.BO.AskGoodMsg;
+import com.nylg.javaee.bean.noReply.VO.GetGoodsCommentIndexVO;
+import com.nylg.javaee.bean.noReply.VO.GetReplyMsgIndex;
 import com.nylg.javaee.bean.noReply.VO.NoReplyMaGVO;
 import com.nylg.javaee.bean.noReply.BO.ReplyBO;
 import com.nylg.javaee.bean.noReply.VO.ReplyMagVO;
@@ -23,5 +26,17 @@ public interface NoReplyService {
     int reply(ReplyBO replyBO);
 
     List<ReplyMagVO> repliedMsg();
+
+    List<GetReplyMsgIndex> getGoodsMsg(int id);
+/**
+ * @Date:2020/12/18 17:39
+ * @Param null:
+ * @return: null
+ * @Author:QSH
+ * @Description: 好评信息
+ */
+    GetGoodsCommentIndexVO getGoodsComment(int goodsId);
+
+    void askGoodMsg(AskGoodMsg askGoodMsg);
 
 }

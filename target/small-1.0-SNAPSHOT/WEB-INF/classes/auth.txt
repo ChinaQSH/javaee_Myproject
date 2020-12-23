@@ -1,0 +1,2 @@
+/api/admin/admin/login
+/api/admin/admin/logoutAdmin

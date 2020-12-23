@@ -7,10 +7,13 @@ package com.nylg.javaee.service.serviceImpl;
  * @Version: 1.0
  */
 
+import com.nylg.javaee.bean.goods.Spec;
+import com.nylg.javaee.bean.goods.VO.GetGoodsInfoIndex;
+import com.nylg.javaee.bean.noReply.BO.SendCommentBO;
 import com.nylg.javaee.bean.order.*;
-import com.nylg.javaee.bean.order.BO.OrderGetBO;
-import com.nylg.javaee.bean.order.BO.UpdeateOrderBO;
+import com.nylg.javaee.bean.order.BO.*;
 import com.nylg.javaee.bean.order.VO.*;
+import com.nylg.javaee.bean.user.VO.UserOrderIndexVO;
 import com.nylg.javaee.dao.OrderDao;
 import com.nylg.javaee.dao.daoImpl.OrderDaoImpl;
 import com.nylg.javaee.service.OrderService;
@@ -63,8 +66,75 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public int deleteOrder(int id) {
+        //        查找订单中几单商品
+        Object []num=orderDao.getNumber(id);
+        orderDao.updateSpecNum(num);
         return orderDao.deleteOrder(id);
     }
+
+    @Override
+    public int addOrder(OrderAddIndex orderAddIndex) {
+//        先获取User信息
+        UserOrderIndexVO userOrderIndexVO=orderDao.getUserInfo(orderAddIndex.getToken());
+//        获取规格信息
+        Spec spec=orderDao.getSpecs(orderAddIndex.getGoodsDetailId());
+//        获取商品名称
+        String name=orderDao.getGoodName(spec.getGoodId());
+//        Integer num = spec.getStockNum()-orderAddIndex.getNum();
+//        spec.setStockNum(num);
+        if (spec.getStockNum()<orderAddIndex.getNum()){
+            return 404;
+        }else {
+            orderDao.insertOrder(userOrderIndexVO,spec,name,orderAddIndex);
+        }
+       return 200;
+    }
+
+    @Override
+    public List<OrderInfoIndex> getOrderByState(int state, String token) {
+
+        if (state==-1){
+
+            return orderDao.getOrderByStates(state,token);
+        }
+
+//        个人中心显示
+        return orderDao.getOrderByState(state,token);
+    }
+
+    @Override
+    public void settleAccounts(OrderCartListBO orderCartListBO) {
+        List<CartList> cartList = orderCartListBO.getCartList();
+        for (CartList list : cartList) {
+//            修改order信息
+            orderDao.updateOrder(list);
+        }
+    }
+
+    @Override
+    public void pay(int id) {
+        orderDao.pay(id);
+    }
+
+    @Override
+    public void confirmReceive(int id) {
+        orderDao.confirmReceive(id);
+    }
+
+    @Override
+    public void sendComment(SendCommentBO sendCommentBO) {
+//        获取userId，specId
+        int userId = orderDao.getUserId(sendCommentBO.getToken());
+        orderDao.sendComment(sendCommentBO,userId);
+
+    }
+
+//    @Override
+//    public int deleteOrderIndex(int id) {
+//
+//        orderDao.deleteOrder(id);
+////        查找
+//    }
 
     private ArrayList<OrderUpdateGetstatesVO> getStates() {
         ArrayList<OrderUpdateGetstatesVO> orderUpdateGetstatesVOS = new ArrayList<>();

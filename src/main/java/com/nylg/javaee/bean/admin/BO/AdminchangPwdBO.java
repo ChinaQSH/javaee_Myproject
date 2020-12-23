@@ -68,6 +68,9 @@ public class AdminchangPwdBO {
         if (!this.newPwd.equals(this.confirmPwd)){
             return 402;
         }
+        if (!this.newPwd.matches("(?=.*([a-zA-Z].*))(?=.*[0-9].*)[a-zA-Z0-9-*/+.~!@#$%^&*()]{8,15}$")){
+            return 403;
+        }
         return 200;
     }
 }

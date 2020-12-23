@@ -7,7 +7,12 @@ package com.nylg.javaee.service.serviceImpl;
  * @Version: 1.0
  */
 
+import com.nylg.javaee.bean.user.BO.UpdateDateIndex;
+import com.nylg.javaee.bean.user.BO.UserLoginBO;
+import com.nylg.javaee.bean.user.BO.UserchangPwdBO;
 import com.nylg.javaee.bean.user.User;
+import com.nylg.javaee.bean.user.VO.UserNameVO;
+import com.nylg.javaee.bean.user.VO.UserVO;
 import com.nylg.javaee.dao.UserDao;
 import com.nylg.javaee.dao.daoImpl.UserDaoImpl;
 import com.nylg.javaee.service.UserService;
@@ -33,5 +38,46 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> searchUser(String word) {
         return userDao.searchUser(word);
+    }
+
+    @Override
+    public int login(UserLoginBO userLoginBO) {
+       return userDao.login(userLoginBO);
+
+
+    }
+
+    @Override
+    public void signup(User user) {
+
+        userDao.sigup(user);
+
+    }
+
+    @Override
+    public int updatePwd(UserchangPwdBO userchangPwdBO) {
+
+        return userDao.updatePwd(userchangPwdBO);
+    }
+
+    @Override
+    public UserVO date(String token) {
+        User date = userDao.date(token);
+        Integer code=0;
+        UserVO userVO = new UserVO(code,date.getId(), date.getEmail(), date.getNickname(), date.getRecipient(), date.getAddress(), date.getPhone());
+        return userVO;
+    }
+
+    @Override
+    public void updateUserData(UpdateDateIndex updateDateIndex) {
+
+
+        userDao.updateUserData(updateDateIndex);
+    }
+
+    @Override
+    public UserNameVO userName(UserLoginBO userLoginBO) {
+
+        return userDao.userName(userLoginBO);
     }
 }

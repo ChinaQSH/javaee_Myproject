@@ -1,10 +1,14 @@
 package com.nylg.javaee.filter;
 
+import com.google.gson.Gson;
+import com.nylg.javaee.bean.Result;
+
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Created by IntelliJ IDEA.
@@ -13,7 +17,7 @@ import java.io.IOException;
  * @create: 2020/12/12 16:09
  * @Version: 1.0
  */
-@WebFilter("/*")
+@WebFilter("/api/admin/*")
 public class ApplicationFilter implements Filter {
     @Override
     public void destroy() {
@@ -29,10 +33,31 @@ public class ApplicationFilter implements Filter {
         request.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=UTF-8");
 //        跨域访问
-        response.setHeader("Access-Control-Allow-Origin","*");
+        String origin = (String) request.getServletContext().getAttribute("origin");
+        List<String> url = (List<String>) request.getServletContext().getAttribute("url");
+        response.setHeader("Access-Control-Allow-Origin",origin);
         response.setHeader("Access-Control-Allow-Methods","POST,GET,OPTIONS,PUT,DELETE");
         response.setHeader("Access-Control-Allow-Headers","x-requested-with,Authorization,Content-Type");
         response.setHeader("Access-Control-Allow-Credentials","true");
+
+        String requestURI = request.getRequestURI();
+        if (!request.getMethod().equals("OPTIONS")){
+            for (String s : url) {
+//                if (!"/api/admin/admin/login".equals(requestURI)||!"/api/admin/admin/logoutAdmin".equals(requestURI)){
+//
+//                }
+                if (s.equals(requestURI)){
+                    break;
+                }
+                if (!s.equals(requestURI)){
+                    String email = (String) request.getSession().getAttribute("email");
+                    if (email==null){
+                        response.getWriter().println(new Gson().toJson(Result.error("请先登录")));
+                        return;
+                    }
+               }
+            }
+        }
         chain.doFilter(request, response);
     }
 

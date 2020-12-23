@@ -7,7 +7,11 @@ package com.nylg.javaee.dao;
  * @Version: 1.0
  */
 
+import com.nylg.javaee.bean.user.BO.UpdateDateIndex;
+import com.nylg.javaee.bean.user.BO.UserLoginBO;
+import com.nylg.javaee.bean.user.BO.UserchangPwdBO;
 import com.nylg.javaee.bean.user.User;
+import com.nylg.javaee.bean.user.VO.UserNameVO;
 
 import java.util.List;
 
@@ -28,4 +32,17 @@ public interface UserDao {
     int deleteUser(int id);
 
     List<User> searchUser(String word);
+
+    int login(UserLoginBO userLoginBO);
+
+    void sigup(User user);
+
+    int updatePwd(UserchangPwdBO userchangPwdBO);
+
+
+    User date(String token);
+
+    void updateUserData(UpdateDateIndex updateDateIndex);
+
+    UserNameVO userName(UserLoginBO userLoginBO);
 }

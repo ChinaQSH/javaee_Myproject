@@ -8,7 +8,9 @@ package com.nylg.javaee.service;
  */
 
 import com.nylg.javaee.bean.goods.BO.*;
+import com.nylg.javaee.bean.goods.VO.GetGoodInfoIndexVO;
 import com.nylg.javaee.bean.goods.VO.GetGoodsVO;
+import com.nylg.javaee.bean.goods.VO.GetSearchGoodsVO;
 import com.nylg.javaee.bean.goods.VO.GoodTypeVO;
 
 import java.util.List;
@@ -50,4 +52,8 @@ public interface GoodsService {
     int deleteGoods(Integer id);
 
     int deleteType(Integer id);
+//前台数据获取
+    GetGoodInfoIndexVO getGoodsInfoIndex(int id);
+
+    List<GetSearchGoodsVO> searchGoods(String keyword);
 }

@@ -1,0 +1,8 @@
+/api/mall/order/addOrder
+/api/mall/order/getOrderByState
+/api/mall/order/deleteOrder
+/api/mall/order/settleAccounts
+/api/mall/order/pay
+/api/mall/order/confirmReceive
+/api/mall/order/sendComment
+/api/mall/goods/askGoodsMsg

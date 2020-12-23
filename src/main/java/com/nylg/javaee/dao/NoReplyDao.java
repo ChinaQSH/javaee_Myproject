@@ -8,11 +8,9 @@ package com.nylg.javaee.dao;
  */
 
 import com.nylg.javaee.bean.noReply.*;
+import com.nylg.javaee.bean.noReply.BO.AskGoodMsg;
 import com.nylg.javaee.bean.noReply.BO.ReplyBO;
-import com.nylg.javaee.bean.noReply.VO.GoodsNameVO;
-import com.nylg.javaee.bean.noReply.VO.NoReplyMaGVO;
-import com.nylg.javaee.bean.noReply.VO.ReplyMagVO;
-import com.nylg.javaee.bean.noReply.VO.UserNameVO;
+import com.nylg.javaee.bean.noReply.VO.*;
 
 import java.util.List;
 
@@ -34,4 +32,16 @@ public interface NoReplyDao {
     List<ReplyMagVO> getReplys();
 
     List<NoReplyMaGVO> getNOReplys();
+
+    List<GetReplyMsgIndex> getGoodsMsg(int id);
+
+    List<CommentListVO> getComment(int goodsId);
+
+    UserIdVO getUserId(String token);
+
+    void InsertReply(Integer id, AskGoodMsg askGoodMsg);
+
+//    GetReplyMsg getGoodsMsgF(int id);
+//
+//    Reply getReply(int id);
 }

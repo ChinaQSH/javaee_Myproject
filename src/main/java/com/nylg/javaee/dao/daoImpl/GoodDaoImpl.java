@@ -14,6 +14,7 @@ import com.nylg.javaee.bean.goods.BO.GoodTypeBO;
 import com.nylg.javaee.bean.goods.BO.UpdateSpecListBO;
 import com.nylg.javaee.bean.goods.VO.GetGoodInfoVO;
 import com.nylg.javaee.bean.goods.VO.GetGoodsVO;
+import com.nylg.javaee.bean.goods.VO.GetSearchGoodsVO;
 import com.nylg.javaee.bean.goods.VO.GoodTypeVO;
 import com.nylg.javaee.dao.GoodDao;
 import com.nylg.javaee.util.DruidUtils;
@@ -73,9 +74,9 @@ public class GoodDaoImpl  implements GoodDao {
 ///添加商品信息到商品表
     @Override
     public void addGoods(Goods goods) {
-        QueryRunner queryRunner = new QueryRunner(DruidUtils.getDataSource());
+        QueryRunner queryRunner = new QueryRunner();
         try {
-            queryRunner.update("insert into goods values (null,?,?,?,?,?,?)",goods.getImg(),goods.getName(),goods.getPrice(),goods.getTypeId(),goods.getStokNum(),goods.getDescription());
+            queryRunner.update(DruidUtils.getConnection(),"insert into goods values (null,?,?,?,?,?,?)",goods.getImg(),goods.getName(),goods.getPrice(),goods.getTypeId(),goods.getStokNum(),goods.getDescription());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -83,10 +84,10 @@ public class GoodDaoImpl  implements GoodDao {
 
     @Override
     public int getMaxId() {
-        QueryRunner queryRunner = new QueryRunner(DruidUtils.getDataSource());
+        QueryRunner queryRunner = new QueryRunner();
         Integer query = null;
         try {
-            query = queryRunner.query("select max(id) from goods", new ScalarHandler<>());
+            query = queryRunner.query(DruidUtils.getConnection(),"select max(id) from goods", new ScalarHandler<>());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -95,9 +96,9 @@ public class GoodDaoImpl  implements GoodDao {
 
     @Override
     public void addSpecList(Object[][] objects) {
-        QueryRunner queryRunner = new QueryRunner(DruidUtils.getDataSource());
+        QueryRunner queryRunner = new QueryRunner();
         try {
-            queryRunner.batch("insert into spec values (null,?,?,?,?)", objects);
+            queryRunner.batch(DruidUtils.getConnection(),"insert into spec values (null,?,?,?,?)", objects);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,6 +233,32 @@ public class GoodDaoImpl  implements GoodDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<GetGoodsVO> getAllGoodsByType() {
+        QueryRunner queryRunner = new QueryRunner(DruidUtils.getDataSource());
+        List<GetGoodsVO> query = null;
+        try {
+            query = queryRunner.query("select id,img,name,price,typeId,stockNum from goods", new BeanListHandler<GetGoodsVO>(GetGoodsVO.class));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return query;
+    }
+
+    @Override
+    public List<GetSearchGoodsVO> searchGoods(String keyword) {
+        String str="%"+keyword+"%";
+        QueryRunner queryRunner = new QueryRunner(DruidUtils.getDataSource());
+        List<GetSearchGoodsVO> query = null;
+        try {
+            query = queryRunner.query("select id,img,name,price,typeId from goods where name like ?", new BeanListHandler<GetSearchGoodsVO>(GetSearchGoodsVO.class), str);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return query;
     }
 
 //    @Override
